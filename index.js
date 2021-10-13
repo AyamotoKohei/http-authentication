@@ -1,8 +1,20 @@
 'use strict';
 const http = require('http');
 const pug = require('pug');
+// Baisc認証するためのモジュール
+const auth = require('http-auth');
+
+// Basic認証の設定を行う
+const basic = auth.basic(
+  // Basic認証時に保護する領域を規定する文字列
+  { realm: 'Enquetes Area.' },
+  (username, password, callback) => {
+    callback(username === 'guest' && password === 'xaXZJQmE');
+  }
+);
+
 const server = http
-  .createServer((req, res) => {
+  .createServer(basic.check((req, res) => {
     console.info('Requested by ' + req.socket.remoteAddress);
     res.writeHead(200, {
       'Content-Type': 'text/html; charset=utf-8'
@@ -67,7 +79,7 @@ const server = http
       default:
         break;
     }
-  })
+  }))
   .on('error', e => {
     console.error('Server Error', e);
   })
