@@ -16,6 +16,17 @@ const basic = auth.basic(
 const server = http
   .createServer(basic.check((req, res) => {
     console.info('Requested by ' + req.socket.remoteAddress);
+
+    // パスが/logoutのとき401を返却する
+    if (req.url === '/logout') {
+      res.writeHead(401, {
+        'Content-Type': 'text/plain; charset=utf-8'
+      });
+      // メッセージを表示して、レスポンスを終了
+      res.end('ログアウトしました');
+      return;
+    }
+
     res.writeHead(200, {
       'Content-Type': 'text/html; charset=utf-8'
     });
